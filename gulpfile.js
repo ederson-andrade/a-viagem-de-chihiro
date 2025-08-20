@@ -16,12 +16,12 @@ import sourcemaps from "gulp-sourcemaps";
 import htmlmin from "gulp-htmlmin";
 import imageminOptipng from "imagemin-optipng";
 import imageminGifsicle from "imagemin-gifsicle";
+import exec from "gulp-exec";
 
 import path from "path";
 import fs from "fs";
 
-import through2 from "through2";
-import { spawn, exec as _exec } from "node:child_process";
+import { exec as _exec } from "node:child_process";
 import { promisify } from "node:util";
 const execShell = promisify(_exec);
 
@@ -37,8 +37,8 @@ const paths = {
   },
   scripts: { src: "src/assets/js/**/*.js", dest: "dist/assets/js" },
   images: {
-    src: 'src/assets/images/**/*.{jpg,jpeg,png,gif}',
-    dest: 'dist/assets/images'
+    src: "src/assets/images/**/*.{jpg,jpeg,png,gif}",
+    dest: "dist/assets/images",
   },
   videos: {
     src: "src/assets/videos/**/*.{mp4,webm}",
@@ -47,10 +47,8 @@ const paths = {
   svgs: { src: "src/assets/images/**/*.svg", dest: "dist/assets/images" },
 };
 
-// Limpa dist/
 export const clean = () => deleteAsync(["dist"]);
 
-// CSS (SCSS -> CSS min + sourcemap + autoprefixer)
 export function styles() {
   return gulp
     .src(paths.styles.entry)
@@ -63,7 +61,6 @@ export function styles() {
     .pipe(server.stream());
 }
 
-// JS (min + sourcemap)
 export function scripts() {
   return gulp
     .src(paths.scripts.src, { sourcemaps: true })
@@ -72,7 +69,6 @@ export function scripts() {
     .pipe(server.stream());
 }
 
-// HTML (min)
 export function html() {
   return gulp
     .src(paths.html.src)
@@ -80,7 +76,6 @@ export function html() {
     .pipe(gulp.dest(paths.html.dest));
 }
 
-// Garante pasta de vídeos
 export const ensureVideoDir = (done) => {
   const videoDest = paths.videos.dest;
   if (!fs.existsSync(videoDest)) {
@@ -90,65 +85,21 @@ export const ensureVideoDir = (done) => {
   done();
 };
 
-// Compressão de vídeos com ffmpeg (stream por arquivo, sem gulp-exec)
 export const compressVideos = () => {
-  // garante a pasta de destino
-  fs.mkdirSync(paths.videos.dest, { recursive: true });
+  const options = { continueOnError: false, pipeStdout: true };
 
-  return gulp.src(paths.videos.src, { allowEmpty: true }).pipe(
-    through2.obj(function (file, _, cb) {
-      if (!file || file.isDirectory()) return cb();
-
-      const filename = path.basename(file.path);
-      const output = path.resolve(paths.videos.dest, filename);
-
-      const args = [
-        "-i",
-        file.path,
-        "-vcodec",
-        "libx264",
-        "-crf",
-        "18",
-        "-preset",
-        "slow",
-        "-profile:v",
-        "high",
-        "-level",
-        "4.2",
-        "-pix_fmt",
-        "yuv420p",
-        "-acodec",
-        "aac",
-        "-b:a",
-        "320k",
-        "-y",
-        output,
-      ];
-
-      const proc = spawn("ffmpeg", args, { stdio: "inherit" });
-
-      proc.on("error", (err) => {
-        cb(
-          new Error(
-            `Não foi possível iniciar o ffmpeg. Está instalado no PATH?\n${err.message}`
-          )
-        );
-      });
-
-      proc.on("close", (code) => {
-        if (code !== 0) {
-          cb(
-            new Error(`ffmpeg falhou (code ${code}) no arquivo: ${file.path}`)
-          );
-        } else {
-          cb(null, file); // segue no pipeline
-        }
-      });
-    })
-  );
+  return gulp
+    .src(paths.videos.src)
+    .pipe(
+      exec((file) => {
+        const filename = path.basename(file.path);
+        const output = path.resolve(paths.videos.dest, filename);
+        return `ffmpeg -i "${file.path}" -vcodec libx264 -crf 18 -preset slow -profile:v high -level 4.2 -pix_fmt yuv420p -acodec aac -b:a 320k -y "${output}"`;
+      }, options)
+    )
+    .pipe(exec.reporter());
 };
 
-// Imagens (otimiza + WebP)
 export const images = () =>
   src(paths.images.src, { encoding: false })
     .pipe(
@@ -161,7 +112,6 @@ export const images = () =>
     )
     .pipe(dest(paths.images.dest));
 
-// SVGs (min + cache por data)
 export function svgs() {
   return gulp
     .src(paths.svgs.src)
@@ -170,7 +120,6 @@ export function svgs() {
     .pipe(gulp.dest(paths.svgs.dest));
 }
 
-// Live server
 export function serve() {
   server.init({
     server: { baseDir: "dist" },
@@ -191,13 +140,11 @@ export function serve() {
   );
 }
 
-// Reload helper
 export function reload(done) {
   server.reload();
   done();
 }
 
-// Pipelines (ordem garantida p/ evitar race conditions)
 export const dev = gulp.series(
   clean,
   gulp.parallel(styles, scripts, images, svgs, html),
@@ -213,7 +160,6 @@ export const build = gulp.series(
   compressVideos
 );
 
-// Tarefa opcional para scripts auxiliares (ex.: fetch de imagens remotas)
 export const init = async () => {
   await execShell("node scripts/fetch-images.mjs");
 };
