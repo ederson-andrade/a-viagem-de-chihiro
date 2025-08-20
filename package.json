@@ -1,0 +1,37 @@
+{
+  "name": "chihiro-landing-gulp",
+  "version": "1.0.0",
+  "description": "Landing responsiva inspirada em A Viagem de Chihiro, com Gulp para build.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "gulp dev",
+    "build": "gulp build",
+    "clean": "gulp clean",
+    "init": "node scripts/fetch-images.mjs"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11",
+    "maintained node versions"
+  ],
+  "devDependencies": {
+    "autoprefixer": "10.4.20",
+    "browser-sync": "2.29.3",
+    "del": "7.1.0",
+    "gulp": "5.0.0",
+    "gulp-clean-css": "4.3.0",
+    "gulp-htmlmin": "5.0.1",
+    "gulp-imagemin": "8.0.0",
+    "gulp-newer": "1.4.0",
+    "gulp-postcss": "10.0.0",
+    "gulp-sass": "5.1.0",
+    "gulp-sourcemaps": "3.0.0",
+    "gulp-svgmin": "4.1.0",
+    "gulp-terser": "2.1.0",
+    "gulp-webp": "5.0.0",
+    "imagemin-mozjpeg": "10.0.0",
+    "imagemin-pngquant": "10.0.0",
+    "sass": "1.77.0"
+  }
+}
