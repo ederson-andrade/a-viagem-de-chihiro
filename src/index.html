@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A Viagem de Chihiro — Mundo dos Espíritos</title>
+  <meta name="description"
+    content="Uma experiência web inspirada em A Viagem de Chihiro. Storytelling, microinterações e galeria de imagens.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Marcellus&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./assets/css/main.css">
+  <meta property="og:title" content="A Viagem de Chihiro — Mundo dos Espíritos">
+  <meta property="og:type" content="website">
+  <meta property="og:description" content="Uma one-page poética e responsiva, com animações suaves.">
+  <meta property="og:image" content="./assets/images/dogo_onsen.jpg">
+  <script>document.documentElement.classList.add('js');</script>
+</head>
+
+<body class="theme theme--humano" data-world="humano">
+  <header class="header">
+    <div class="header__container">
+      <a href="#" class="header__brand">
+        <img class="header__logo" src="./assets/images/spirited_away_logo.png" alt="Spirited Away logo">
+        <span class="header__title">Mundo dos Espíritos</span>
+      </a>
+      <nav class="header__nav" aria-label="primária">
+        <a class="header__link" href="#jornada">Jornada</a>
+        <a class="header__link" href="#banho">O Banho</a>
+        <a class="header__link" href="#personagens">Personagens</a>
+        <a class="header__link" href="#monstros">Monstros</a>
+        <a class="header__link" href="#galeria">Galeria</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero" aria-label="Hero com vídeo do trailer">
+      <div class="hero__container">
+        <h1 class="hero__title js-split">A Viagem de Chihiro</h1>
+        <p class="hero__subtitle revelar">Uma travessia entre nomes, coragem e pertencimento.</p>
+        <div class="hero__media revelar">
+          <video class="hero__video" width="100%" poster="./assets/images/dogo_onsen.jpg" autoplay loop playsinline
+            controls>
+            <source src="./assets/videos/chirriro.mp4" type="video/mp4">
+            Seu navegador não suporta vídeo HTML5.
+          </video>
+        </div>
+        <div class="hero__ctas">
+          <a class="btn btn--primario" href="#jornada">Explorar</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="jornada" class="section section--jornada">
+      <div class="section__container">
+        <h2 class="section__title js-split">Jornada de Chihiro</h2>
+        <p class="section__lead revelar">Chihiro atravessa um túnel e descobre um mundo regido por regras antigas. Para
+          resgatar os pais e a si mesma, ela precisa lembrar quem é, assinar contratos e agir com coragem, mesmo com
+          medo.</p>
+        <div class="grid grid--2">
+          <div class="card revelar">
+            <h3 class="card__title">Nome e Identidade</h3>
+            <p class="card__text">Ao perder o nome, perde-se o caminho de volta. Recuperá-lo é retomar a própria
+              história.</p>
+          </div>
+          <div class="card revelar">
+            <h3 class="card__title">Trabalho e Dignidade</h3>
+            <p class="card__text">No banho, cada tarefa importa. O esforço sincero transforma a realidade e conquista
+              aliados.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="banho" class="section section--banho">
+      <div class="section__container">
+        <h2 class="section__title js-split">O Banho</h2>
+        <p class="section__lead revelar">Coração da narrativa, a casa de banhos acolhe espíritos, deuses do rio e
+          criaturas anônimas. É onde sujeira vira purificação, e onde Chihiro testa limites.</p>
+        <div class="banho__media revelar">
+          <img class="banho__img" src="./assets/images/casadebanho.png" width="1000" height="750"
+            alt="Dōgo Onsen — referência arquitetônica de banhos japoneses">
+        </div>
+      </div>
+    </section>
+
+    <section id="personagens" class="section section--personagens">
+      <div class="section__container">
+        <h2 class="section__title js-split">Personagens (Humanos)</h2>
+        <p class="section__lead revelar">Os rostos humanos que movem a narrativa.</p>
+    
+        <div class="personagens__grid">
+          <!-- Chihiro -->
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/chirriro.png" width="600" height="800" alt="Chihiro (Sen)"
+                loading="lazy">
+              <figcaption class="card__caption">Chihiro (Sen)</figcaption>
+            </figure>
+          </article>
+    
+          <!-- Lin -->
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/lin.png" width="600" height="800"
+                alt="Lin — funcionária da casa de banhos" loading="lazy">
+              <figcaption class="card__caption">Lin</figcaption>
+            </figure>
+          </article>
+    
+          <!-- Pais da Chihiro -->
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/pais_chihiro.png" width="600" height="800" alt="Pais da Chihiro"
+                loading="lazy">
+              <figcaption class="card__caption">Pais da Chihiro</figcaption>
+            </figure>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="monstros" class="section section--monstros">
+      <div class="section__container">
+        <h2 class="section__title js-split">Monstros &amp; Entidades</h2>
+        <p class="section__lead revelar">Quando o mundo cruza o limiar do estranho, rostos mudam e regras também.</p>
+    
+        <div class="personagens__grid">
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/semrosto.png" width="500" height="500" alt="Sem-Rosto (No-Face)"
+                loading="lazy">
+              <figcaption class="card__caption">Sem-Rosto (No-Face)</figcaption>
+            </figure>
+          </article>
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/yubaba.png" width="800" height="800" alt="Yubaba — a feiticeira"
+                loading="lazy">
+              <figcaption class="card__caption">Yubaba</figcaption>
+            </figure>
+          </article>
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/susuwatari.png" width="800" height="800"
+                alt="Susuwatari — fuligem viva" loading="lazy">
+              <figcaption class="card__caption">Susuwatari</figcaption>
+            </figure>
+          </article>
+    
+          <!-- Haku (dragão) -->
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/haku_dragao.png" width="1000" height="700"
+                alt="Haku em forma de dragão" loading="lazy">
+              <figcaption class="card__caption">Haku (forma de dragão)</figcaption>
+            </figure>
+          </article>
+    
+          <!-- Boh (bebezão) -->
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/boh.png" width="800" height="800" alt="Boh — o bebê gigante"
+                loading="lazy">
+              <figcaption class="card__caption">Boh (bebê gigante)</figcaption>
+            </figure>
+          </article>
+    
+          <!-- Aogaeru (sapo) -->
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/aogaeru.png" width="800" height="800" alt="Aogaeru — o sapo"
+                loading="lazy">
+              <figcaption class="card__caption">Aogaeru (sapo)</figcaption>
+            </figure>
+          </article>
+    
+          <!-- Kamaji (o “véio aranha”) -->
+          <article class="card card--personagem revelar">
+            <figure class="card__figure">
+              <img class="card__image" src="./assets/images/kamaji.png" width="800" height="800"
+                alt="Kamaji — o caldeireiro de múltiplos braços" loading="lazy">
+              <figcaption class="card__caption">Kamaji</figcaption>
+            </figure>
+          </article>
+        </div>
+    
+        <!-- Texto complementar opcional -->
+        <div class="grid grid--2" style="margin-top: var(--space-600, 3rem);">
+          <div class="card revelar">
+            <h3 class="card__title">Espírito Poluído</h3>
+            <p class="card__text">Quando a sujeira vira entidade, o banho purifica.</p>
+          </div>
+          <div class="card revelar">
+            <h3 class="card__title">Sombras do Corredor</h3>
+            <p class="card__text">Silhuetas que existem só quando ninguém olha.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="galeria" class="section section--galeria">
+      <div class="section__container">
+        <h2 class="section__title js-split">Galeria</h2>
+        <div class="galeria">
+          <a class="galeria__item revelar" href="./assets/images/dogo_onsen.jpg">
+            <img src="./assets/images/dogo_onsen.jpg" alt="Banho tradicional — Dōgo Onsen">
+          </a>
+          <a class="galeria__item revelar" href="./assets/images/no_face_pf23.jpg">
+            <img src="./assets/images/no_face_pf23.jpg" alt="Sem-Rosto ao ar livre">
+          </a>
+          <a class="galeria__item revelar" href="./assets/images/lucca_spirited_away.jpg">
+            <img src="./assets/images/lucca_spirited_away.jpg" alt="Cosplays em Lucca">
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__container">
+      <p class="footer__legal text--small">Projeto de fã sem fins comerciais, criado para estudo de front-end.</p>
+      <details class="footer__credits">
+        <summary>Créditos de imagens</summary>
+        <ul>
+          <li>Logo “Spirited Away” — domínio público (text-logo). Fonte: Wikimedia Commons.</li>
+          <li>Sem-Rosto PF23 — CC0 por 玄史生.</li>
+          <li>Sem-Rosto Otakon 2022 — CC BY 2.0 por stupid systemus.</li>
+          <li>Sem-Rosto SDCC 2011 — CC BY-SA 2.0 por William Tung.</li>
+          <li>Dōgo Onsen — CC BY-SA 3.0 por Tordu01.</li>
+          <li>Cosplay Lucca 2017 — CC BY-SA 4.0 por Syrio.</li>
+        </ul>
+      </details>
+    </div>
+  </footer>
+
+  <script src="./assets/js/main.js" defer></script>
+</body>
+
+</html>
