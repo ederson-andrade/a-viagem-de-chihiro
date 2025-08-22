@@ -25,6 +25,10 @@ import { spawn, exec as _exec } from "node:child_process";
 import { promisify } from "node:util";
 const execShell = promisify(_exec);
 
+// 🔹 ADIÇÃO: FFmpeg empacotado (funciona na Vercel e local)
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+const ffmpegPath = ffmpegInstaller.path;
+
 const sass = gulpSass(dartSass);
 const server = browserSync.create();
 
@@ -37,8 +41,8 @@ const paths = {
   },
   scripts: { src: "src/assets/js/**/*.js", dest: "dist/assets/js" },
   images: {
-    src: 'src/assets/images/**/*.{jpg,jpeg,png,gif}',
-    dest: 'dist/assets/images'
+    src: "src/assets/images/**/*.{jpg,jpeg,png,gif}",
+    dest: "dist/assets/images",
   },
   videos: {
     src: "src/assets/videos/**/*.{mp4,webm}",
@@ -61,7 +65,6 @@ export function styles() {
     .pipe(server.stream());
 }
 
-
 export function scripts() {
   return gulp
     .src(paths.scripts.src, { sourcemaps: true })
@@ -70,14 +73,12 @@ export function scripts() {
     .pipe(server.stream());
 }
 
-
 export function html() {
   return gulp
     .src(paths.html.src)
     .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
     .pipe(gulp.dest(paths.html.dest));
 }
-
 
 export const ensureVideoDir = (done) => {
   const videoDest = paths.videos.dest;
@@ -89,15 +90,15 @@ export const ensureVideoDir = (done) => {
 };
 
 export const compressVideos = () => {
-
   fs.mkdirSync(paths.videos.dest, { recursive: true });
 
   return gulp.src(paths.videos.src, { allowEmpty: true }).pipe(
     through2.obj(function (file, _, cb) {
       if (!file || file.isDirectory()) return cb();
 
-      const filename = path.basename(file.path);
-      const output = path.resolve(paths.videos.dest, filename);
+      // 🔹 AJUSTE: força saída .mp4 (evita H.264+Aac dentro de .webm)
+      const base = path.parse(file.path).name;
+      const output = path.resolve(paths.videos.dest, `${base}.mp4`);
 
       const args = [
         "-i",
@@ -122,12 +123,13 @@ export const compressVideos = () => {
         output,
       ];
 
-      const proc = spawn("ffmpeg", args, { stdio: "inherit" });
+      // 🔹 AJUSTE: usa binário empacotado (Vercel-friendly)
+      const proc = spawn(ffmpegPath, args, { stdio: "inherit" });
 
       proc.on("error", (err) => {
         cb(
           new Error(
-            `Não foi possível iniciar o ffmpeg. Está instalado no PATH?\n${err.message}`
+            `Não foi possível iniciar o ffmpeg. Binário: ${ffmpegPath}\n${err.message}`
           )
         );
       });
@@ -138,13 +140,12 @@ export const compressVideos = () => {
             new Error(`ffmpeg falhou (code ${code}) no arquivo: ${file.path}`)
           );
         } else {
-          cb(null, file); 
+          cb(null, file);
         }
       });
     })
   );
 };
-
 
 export const images = () =>
   src(paths.images.src, { encoding: false })

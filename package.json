@@ -16,6 +16,7 @@
     "maintained node versions"
   ],
   "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "autoprefixer": "10.4.20",
     "browser-sync": "2.29.3",
     "del": "7.1.0",
