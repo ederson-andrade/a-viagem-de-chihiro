@@ -16,12 +16,12 @@ import sourcemaps from "gulp-sourcemaps";
 import htmlmin from "gulp-htmlmin";
 import imageminOptipng from "imagemin-optipng";
 import imageminGifsicle from "imagemin-gifsicle";
-import exec from "gulp-exec";
 
 import path from "path";
 import fs from "fs";
 
-import { exec as _exec } from "node:child_process";
+import through2 from "through2";
+import { spawn, exec as _exec } from "node:child_process";
 import { promisify } from "node:util";
 const execShell = promisify(_exec);
 
@@ -37,8 +37,8 @@ const paths = {
   },
   scripts: { src: "src/assets/js/**/*.js", dest: "dist/assets/js" },
   images: {
-    src: "src/assets/images/**/*.{jpg,jpeg,png,gif}",
-    dest: "dist/assets/images",
+    src: 'src/assets/images/**/*.{jpg,jpeg,png,gif}',
+    dest: 'dist/assets/images'
   },
   videos: {
     src: "src/assets/videos/**/*.{mp4,webm}",
@@ -61,6 +61,7 @@ export function styles() {
     .pipe(server.stream());
 }
 
+
 export function scripts() {
   return gulp
     .src(paths.scripts.src, { sourcemaps: true })
@@ -69,12 +70,14 @@ export function scripts() {
     .pipe(server.stream());
 }
 
+
 export function html() {
   return gulp
     .src(paths.html.src)
     .pipe(htmlmin({ collapseWhitespace: true, removeComments: true }))
     .pipe(gulp.dest(paths.html.dest));
 }
+
 
 export const ensureVideoDir = (done) => {
   const videoDest = paths.videos.dest;
@@ -86,19 +89,62 @@ export const ensureVideoDir = (done) => {
 };
 
 export const compressVideos = () => {
-  const options = { continueOnError: false, pipeStdout: true };
 
-  return gulp
-    .src(paths.videos.src)
-    .pipe(
-      exec((file) => {
-        const filename = path.basename(file.path);
-        const output = path.resolve(paths.videos.dest, filename);
-        return `ffmpeg -i "${file.path}" -vcodec libx264 -crf 18 -preset slow -profile:v high -level 4.2 -pix_fmt yuv420p -acodec aac -b:a 320k -y "${output}"`;
-      }, options)
-    )
-    .pipe(exec.reporter());
+  fs.mkdirSync(paths.videos.dest, { recursive: true });
+
+  return gulp.src(paths.videos.src, { allowEmpty: true }).pipe(
+    through2.obj(function (file, _, cb) {
+      if (!file || file.isDirectory()) return cb();
+
+      const filename = path.basename(file.path);
+      const output = path.resolve(paths.videos.dest, filename);
+
+      const args = [
+        "-i",
+        file.path,
+        "-vcodec",
+        "libx264",
+        "-crf",
+        "18",
+        "-preset",
+        "slow",
+        "-profile:v",
+        "high",
+        "-level",
+        "4.2",
+        "-pix_fmt",
+        "yuv420p",
+        "-acodec",
+        "aac",
+        "-b:a",
+        "320k",
+        "-y",
+        output,
+      ];
+
+      const proc = spawn("ffmpeg", args, { stdio: "inherit" });
+
+      proc.on("error", (err) => {
+        cb(
+          new Error(
+            `Não foi possível iniciar o ffmpeg. Está instalado no PATH?\n${err.message}`
+          )
+        );
+      });
+
+      proc.on("close", (code) => {
+        if (code !== 0) {
+          cb(
+            new Error(`ffmpeg falhou (code ${code}) no arquivo: ${file.path}`)
+          );
+        } else {
+          cb(null, file); 
+        }
+      });
+    })
+  );
 };
+
 
 export const images = () =>
   src(paths.images.src, { encoding: false })
