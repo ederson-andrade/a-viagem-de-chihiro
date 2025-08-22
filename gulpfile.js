@@ -20,14 +20,13 @@ import imageminGifsicle from "imagemin-gifsicle";
 import path from "path";
 import fs from "fs";
 
-import through2 from "through2";
-import { spawn, exec as _exec } from "node:child_process";
+// Usaremos gulp-exec como no projeto que funciona na Vercel
+import exec from "gulp-exec";
+
+// Mantém execShell para o init
+import { exec as _exec } from "node:child_process";
 import { promisify } from "node:util";
 const execShell = promisify(_exec);
-
-// 🔹 ADIÇÃO: FFmpeg empacotado (funciona na Vercel e local)
-import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
-const ffmpegPath = ffmpegInstaller.path;
 
 const sass = gulpSass(dartSass);
 const server = browserSync.create();
@@ -90,61 +89,24 @@ export const ensureVideoDir = (done) => {
 };
 
 export const compressVideos = () => {
+  // Garante a pasta de saída
   fs.mkdirSync(paths.videos.dest, { recursive: true });
 
-  return gulp.src(paths.videos.src, { allowEmpty: true }).pipe(
-    through2.obj(function (file, _, cb) {
-      if (!file || file.isDirectory()) return cb();
+  const options = { continueOnError: false, pipeStdout: true };
+  const reporterOptions = { err: true, stderr: true, stdout: true };
 
-      // 🔹 AJUSTE: força saída .mp4 (evita H.264+Aac dentro de .webm)
-      const base = path.parse(file.path).name;
-      const output = path.resolve(paths.videos.dest, `${base}.mp4`);
-
-      const args = [
-        "-i",
-        file.path,
-        "-vcodec",
-        "libx264",
-        "-crf",
-        "18",
-        "-preset",
-        "slow",
-        "-profile:v",
-        "high",
-        "-level",
-        "4.2",
-        "-pix_fmt",
-        "yuv420p",
-        "-acodec",
-        "aac",
-        "-b:a",
-        "320k",
-        "-y",
-        output,
-      ];
-
-      // 🔹 AJUSTE: usa binário empacotado (Vercel-friendly)
-      const proc = spawn(ffmpegPath, args, { stdio: "inherit" });
-
-      proc.on("error", (err) => {
-        cb(
-          new Error(
-            `Não foi possível iniciar o ffmpeg. Binário: ${ffmpegPath}\n${err.message}`
-          )
-        );
-      });
-
-      proc.on("close", (code) => {
-        if (code !== 0) {
-          cb(
-            new Error(`ffmpeg falhou (code ${code}) no arquivo: ${file.path}`)
-          );
-        } else {
-          cb(null, file);
-        }
-      });
-    })
-  );
+  // allowEmpty evita falha quando não houver vídeos
+  return gulp
+    .src(paths.videos.src, { allowEmpty: true })
+    .pipe(
+      exec((file) => {
+        const filename = path.basename(file.path);
+        const output = path.resolve(paths.videos.dest, filename);
+        // Mesma linha de comando do projeto que já funciona na Vercel
+        return `ffmpeg -i "${file.path}" -vcodec libx264 -crf 18 -preset slow -profile:v high -level 4.2 -pix_fmt yuv420p -acodec aac -b:a 320k -y "${output}"`;
+      }, options)
+    )
+    .pipe(exec.reporter(reporterOptions));
 };
 
 export const images = () =>
